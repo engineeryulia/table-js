@@ -10,6 +10,10 @@ body {
   margin: auto;
 }
 
+.filters {
+  margin: 20px auto;
+}
+
 table {
   width: 100%;
   border-collapse: collapse;
