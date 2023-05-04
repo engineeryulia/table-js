@@ -1,3 +1,9 @@
+function createCell(content) {
+  const cell = document.createElement('td');
+  cell.textContent = content;
+  return cell;
+}
+
 export default function createTable(tableBody, students) {
   students.forEach((student) => {
     const row = document.createElement('tr');
