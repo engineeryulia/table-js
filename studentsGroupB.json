@@ -1,3 +1,4 @@
+
 [
   { "id": 1, "firstName": "Ivan", "lastName": "Ivanov", "grade": 6 },
   { "id": 2, "firstName": "Petr", "lastName": "Petrov", "grade": 5 },

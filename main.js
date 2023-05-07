@@ -1,33 +1,78 @@
-import filterTable from "./filterTable.js";
-import createTable from "./createTable.js";
+import createTable from './createTable.js';
+import filterTable from './filterTable.js';
 
-async function fetchStudents() {
-  const response = await fetch('./getStudents.json')
-  const students = await response.json();
-  return students;
+async function fetchStudents(group = 1) {
+	let response;
+
+	switch (group) {
+		case 1:
+			response = await fetch('./studentsGroupA.json');
+			break;
+		case 2:
+			response = await fetch('./studentsGroupB.json');
+			break;
+		default:
+			console.error('Invalid group number provided');
+			return;
+	}
+	
+	const students = await response.json();
+	return students;
 }
 
-async function init () {
-  const tableBody = document.querySelector('#studentsTable tbody');
-  const students = await fetchStudents();
+const init = async () => {
+	const tableBody = document.querySelector('tbody[data-tbody-id="students"]');
+	let students = await fetchStudents(2);
 
-  //const students = getStudents();
+	createTable(tableBody, students);
 
-  createTable(tableBody, students);
+	const searchInputs = document.querySelectorAll('.search');
+	const headers = document.querySelectorAll('.sortable');
 
-  const searchInput = document.querySelector('#search');
+	const sortData = {
+		id: true,
+		firstName: true,
+		lastName: true,
+		grade: true
+	}
 
-  searchInput.addEventListener('input', (event) => {
-    const searchValue = event.target.value;
-    
-  const filteredStudents = filterTable(students, searchValue)
+	headers.forEach(header => {
+		header.addEventListener('click', () => {
+			const column = header.getAttribute('data-column');
 
-    tableBody.innerHTML = '';
-    createTable(tableBody, filteredStudents)
+			students = students.sort((a, b) => {
+				const valueA = a[column].toString().toLowerCase();
+				const valueB = b[column].toString().toLowerCase();
 
-  });
-  
-}
+				if (sortData[column]) {
+					return valueA.localeCompare(valueB);
+				} else {
+					return valueB.localeCompare(valueA);
+				}
+			});
+
+			sortData[column] = !sortData[column];
+
+			tableBody.innerHTML = '';
+			createTable(tableBody, students);
+		});
+	});
+
+	searchInputs.forEach(input => {
+		const searchValues = {};
+
+		input.addEventListener('input', () => {
+			searchInputs.forEach(input => {
+				searchValues[input.getAttribute('data-column')] = input.value;
+			});
+
+			const filteredStudents = filterTable(students, searchValues);
+
+			tableBody.innerHTML = '';
+			createTable(tableBody, filteredStudents);
+		});
+	});
+};
 
 init();
 

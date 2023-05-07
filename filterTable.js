@@ -1,6 +1,9 @@
-export default function filterTable(students, searchValue) {
+export default function filterTable(students, searchValues) {
   const filteredStudents = students.filter((student) => {
-    return student.lastName.toLowerCase().includes(searchValue.toLowerCase())
+  return Object.keys(searchValues).every((key) => {
+    return student[key].toString().toLowerCase().includes(searchValues[key].toLowerCase());
   });
-  return filteredStudents();
+});
+
+  return filteredStudents;
 }
